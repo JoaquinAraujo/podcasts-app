@@ -1,0 +1,27 @@
+{
+  "name": "podcasts",
+  "version": "1.0.0",
+  "description": "Application to listen PodCasts",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoaquinAraujo/podcasts-app.git"
+  },
+  "author": "Joaquin Araujo <joaquinaraujojs@gmail.com> (https://twitter.com/JoaquinAraujoJS)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JoaquinAraujo/podcasts-app/issues"
+  },
+  "homepage": "https://github.com/JoaquinAraujo/podcasts-app#readme",
+  "devDependencies": {},
+  "dependencies": {
+    "next": "^6.1.1",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1"
+  }
+}
