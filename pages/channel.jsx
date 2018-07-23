@@ -4,38 +4,57 @@ import 'isomorphic-fetch'
 import Link from 'next/link'
 
 export default class extends React.Component {
-  static async getInitialProps () {
-    const reqChannels = await fetch('https://api.audioboom.com/channels/recommended')
+  static async getInitialProps ({ query }) {
+    const idChannel = query.id
 
-    const { body: channels } = await reqChannels.json()
+    const [ reqChannel, reqAudio, reqSeries ] = await Promise.all(
+      [
+        fetch(`https://api.audioboom.com/channels/${idChannel}`),
+        fetch(`https://api.audioboom.com/channels/${idChannel}/audio_clips`),
+        fetch(`https://api.audioboom.com/channels/${idChannel}/child_channels`)
+      ]
+    )
+
+    const { body: { channel } } = await reqChannel.json()
+    const { body: { audio_clips } } = await reqAudio.json()
+    const { body: { channels } } = await reqSeries.json()
 
     return {
+      channel,
+      audio_clips,
       channels
     }
   }
 
   render () {
-    const { channels } = this.props
+    const { channel, audio_clips, channels } = this.props
 
     return (
       <div>
         <header>PodCasts</header>
 
-        <div className="channels">
+        <h1>{ channel.title }</h1>
+
+        {
+          channels.length > 0 &&
+          <h2>Series</h2>
+        }
+        {
+          channels.map(serie => (
+            <div key={ serie.id }>{ serie.title }</div>
+          ))
+        }
+
+        <h2>Últimos Podcasts</h2>
+
+        <div className="audioClips">
           {
-            channels.map(channel => (
+            audio_clips.map(clip => (
               <Link
-                key={ channel.id }
-                href={`/channel?id=${ channel.id }`}
-                prefetch
+                key={ clip.id }
+                href={`/podcast?id=${ clip.id }`}
               >
-                <a className="channel">
-                  <img
-                    src={ channel.urls.logo_image.original }
-                    alt={ channel.title }
-                  />
-                  <h2>{ channel.title }</h2>
-                </a>
+                <a>{ clip.title }</a>
               </Link>
             ))
           }
@@ -69,6 +88,12 @@ export default class extends React.Component {
                 border-radius: 3px;
                 box-shadow: 0px 2px 6px rgba(0,0,0,0.15);
                 width: 100%;
+              }
+
+              h1 {
+                font-weight: 600;
+                padding: 0 15px;
+                margin: 15px 0;
               }
 
               h2 {
