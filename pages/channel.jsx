@@ -1,7 +1,10 @@
 'use strict'
 
 import 'isomorphic-fetch'
-import Link from 'next/link'
+
+import Layout from '../components/Layout'
+import ChannelGrid from '../components/ChannelGrid'
+import PodcastList from '../components/PodcastList'
 
 export default class extends React.Component {
   static async getInitialProps ({ query }) {
@@ -30,66 +33,19 @@ export default class extends React.Component {
     const { channel, audio_clips, channels } = this.props
 
     return (
-      <div>
-        <header>PodCasts</header>
+      <Layout title={ channel.title }>
 
         <h1>{ channel.title }</h1>
 
-        {
-          channels.length > 0 &&
-          <h2>Series</h2>
-        }
-        {
-          channels.map(serie => (
-            <div key={ serie.id }>{ serie.title }</div>
-          ))
-        }
-
         <h2>Últimos Podcasts</h2>
+        <PodcastList audio_clips={ audio_clips } />
 
-        <div className="audioClips">
-          {
-            audio_clips.map(clip => (
-              <Link
-                key={ clip.id }
-                href={`/podcast?id=${ clip.id }`}
-              >
-                <a>{ clip.title }</a>
-              </Link>
-            ))
-          }
-        </div>
+        <h2>Series</h2>
+        <ChannelGrid channels={ channels } />
 
         <style jsx>
           {
             `
-              header {
-                color: #fff;
-                background: #8756ca;
-                padding: 15px;
-                text-align: center;
-              }
-
-              .channels {
-                display: grid;
-                grid-gap: 15px;
-                padding: 15px;
-                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-              }
-
-              a.channel {
-                display: block;
-                margin-bottom: 0.5em;
-                color: #333;
-                text-decoration: none;
-              }
-
-              .channel img {
-                border-radius: 3px;
-                box-shadow: 0px 2px 6px rgba(0,0,0,0.15);
-                width: 100%;
-              }
-
               h1 {
                 font-weight: 600;
                 padding: 0 15px;
@@ -101,23 +57,15 @@ export default class extends React.Component {
                 font-size: 0.9em;
                 font-weight: 600;
                 margin: 0;
+              }
+
+              h1, h2 {
                 text-align: center;
               }
             `
           }
         </style>
-        <style jsx global>
-          {
-            `
-              body {
-                margin: 0;
-                font-family: system-ui;
-                background: white;
-              }
-            `
-          }
-        </style>
-      </div>
+      </Layout>
     )
   }
 }

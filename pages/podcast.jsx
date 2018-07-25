@@ -3,6 +3,8 @@
 import 'isomorphic-fetch'
 import Link from 'next/link'
 
+import Layout from '../components/Layout'
+
 export default class extends React.Component {
   static async getInitialProps ({ query }) {
     const idPodcast = query.id
@@ -20,8 +22,7 @@ export default class extends React.Component {
     const { audio_clip } = this.props
 
     return (
-      <div>
-        <header>Podcasts</header>
+      <Layout title={ audio_clip.title }>
 
         <div className='modal'>
           <div className='clip'>
@@ -136,7 +137,7 @@ export default class extends React.Component {
           `
         }
         </style>
-      </div>
+      </Layout>
     )
   }
 }
