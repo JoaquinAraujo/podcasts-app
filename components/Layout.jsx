@@ -12,10 +12,11 @@ export default class Layout extends React.Component {
       <div>
         <Head>
           <title>{ title }</title>
+          <meta name="viewport" content="width=device-width" />
         </Head>
 
         <header>
-          <Link href="/"><a>{ title }</a></Link>
+          <Link href="/"><a>Podcasts</a></Link>
         </header>
 
         { children }

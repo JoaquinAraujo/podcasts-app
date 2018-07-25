@@ -5,19 +5,36 @@ import 'isomorphic-fetch'
 import Layout from '../components/Layout'
 import ChannelGrid from '../components/ChannelGrid'
 
+import Error from 'next/error'
+
 export default class extends React.Component {
-  static async getInitialProps () {
-    const reqChannels = await fetch('https://api.audioboom.com/channels/recommended')
+  static async getInitialProps ({ res }) {
+    try {
+      const reqChannels = await fetch('https://api.audioboom.com/channels/recommended')
 
-    const { body: channels } = await reqChannels.json()
+      const { body: channels } = await reqChannels.json()
 
-    return {
-      channels
+      return {
+        statusCode: 200,
+        channels
+      }
+    } catch (err) {
+      res.statusCode = 503
+      return {
+        statusCode: 503,
+        channels: null
+      }
     }
   }
 
   render () {
-    const { channels } = this.props
+    const { statusCode, channels } = this.props
+
+    if (statusCode !== 200) {
+      return (
+        <Error statusCode={ statusCode } />
+      )
+    }
 
     return (
       <Layout title="Podcasts">
