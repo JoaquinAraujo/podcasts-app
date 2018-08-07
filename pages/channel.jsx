@@ -4,11 +4,19 @@ import 'isomorphic-fetch'
 
 import Layout from '../components/Layout'
 import ChannelGrid from '../components/ChannelGrid'
-import PodcastList from '../components/PodcastList'
+import PodcastListWithClick from '../components/PodcastListWithClick'
+import PodcastPlayer from '../components/PodcastPlayer'
 
-import Error from 'next/error'
+import Error from './_error'
 
 export default class extends React.Component {
+  constructor (props) {
+    super (props);
+    this.state = {
+      openPodcast: null
+    }
+  }
+
   static async getInitialProps ({ res, query }) {
     try {
       const idChannel = query.id
@@ -52,8 +60,23 @@ export default class extends React.Component {
     }
   }
 
+  openPodcast = (event, podcast) => {
+    event.preventDefault()
+    this.setState({
+      openPodcast: podcast
+    })
+  }
+
+  closePodcast = event => {
+    event.preventDefault()
+    this.setState({
+      openPodcast: null
+    })
+  }
+
   render () {
     const { statusCode, channel, audio_clips, channels } = this.props
+    const { openPodcast } = this.state
 
     if (statusCode !== 200) {
       return (
@@ -67,8 +90,21 @@ export default class extends React.Component {
 
         <h1>{ channel.title }</h1>
 
+        {
+          openPodcast &&
+          <div className="modal">
+            <PodcastPlayer
+              clip={ openPodcast }
+              onClose={ this.closePodcast }
+            />
+          </div>
+        }
+
         <h2>Últimos Podcasts</h2>
-        <PodcastList audio_clips={ audio_clips } />
+        <PodcastListWithClick
+          podcasts={ audio_clips }
+          onClickPodcast={ this.openPodcast }
+        />
 
         {
           channels.length > 0 &&
@@ -104,6 +140,15 @@ export default class extends React.Component {
 
               h1, h2 {
                 text-align: center;
+              }
+
+              .modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 99999;
               }
             `
           }
